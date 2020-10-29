@@ -8,6 +8,7 @@ import React, {
 } from 'react'
 import { Logger } from '@oceanprotocol/lib'
 import { LogLevel } from '@oceanprotocol/lib/dist/node/utils/Logger'
+import { useOcean } from '@oceanprotocol/react'
 
 interface UserPreferencesValue {
   debug: boolean
@@ -22,16 +23,21 @@ interface UserPreferencesValue {
 
 const UserPreferencesContext = createContext(null)
 
-const localStorageKey = 'ocean-user-preferences'
+function getLocalStorage(networkId: number): UserPreferencesValue {
+  const localStorageKey = `ocean-user-preferences-${networkId}`
 
-function getLocalStorage(): UserPreferencesValue {
   const storageParsed =
     typeof window !== 'undefined' &&
     JSON.parse(window.localStorage.getItem(localStorageKey))
   return storageParsed
 }
 
-function setLocalStorage(values: Partial<UserPreferencesValue>) {
+function setLocalStorage(
+  values: Partial<UserPreferencesValue>,
+  networkId: number
+) {
+  const localStorageKey = `ocean-user-preferences-${networkId}`
+
   return (
     typeof window !== 'undefined' &&
     window.localStorage.setItem(localStorageKey, JSON.stringify(values))
@@ -43,19 +49,28 @@ function UserPreferencesProvider({
 }: {
   children: ReactNode
 }): ReactElement {
-  const localStorage = getLocalStorage()
+  const { networkId } = useOcean()
 
-  // Set default values from localStorage
-  const [debug, setDebug] = useState<boolean>(localStorage?.debug || false)
-  const [currency, setCurrency] = useState<string>(
-    localStorage?.currency || 'EUR'
-  )
+  // Set default values
+  const [debug, setDebug] = useState<boolean>(false)
+  const [currency, setCurrency] = useState<string>('EUR')
+  const [bookmarks, setBookmarks] = useState([])
   const [locale, setLocale] = useState<string>()
-  const [bookmarks, setBookmarks] = useState(localStorage?.bookmarks || [])
+
+  // Update from localStorage on mount & network change
+  useEffect(() => {
+    if (!networkId) return
+
+    const { debug, currency, bookmarks } = getLocalStorage(networkId)
+    setDebug(debug)
+    setCurrency(currency)
+    setBookmarks(bookmarks)
+  }, [networkId])
 
   // Write values to localStorage on change
   useEffect(() => {
-    setLocalStorage({ debug, currency, bookmarks })
+    if (!networkId) return
+    setLocalStorage({ debug, currency, bookmarks }, networkId)
   }, [debug, currency, bookmarks])
 
   // Set ocean.js log levels, default: Error

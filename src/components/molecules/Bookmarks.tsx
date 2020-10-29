@@ -9,18 +9,15 @@ import Price from '../atoms/Price'
 import Tooltip from '../atoms/Tooltip'
 
 async function getAssetsBookmarked(pins: string[], metadataCacheUri: string) {
-  try {
-    const metadataCache = new MetadataCache(metadataCacheUri, Logger)
-    const result: DDO[] = []
+  const metadataCache = new MetadataCache(metadataCacheUri, Logger)
+  const result: DDO[] = []
 
-    for (const pin of pins) {
-      result.push(await metadataCache.retrieveDDO(pin))
-    }
-
-    return result
-  } catch (error) {
-    Logger.error(error.message)
+  for (const pin of pins) {
+    const ddo = await metadataCache.retrieveDDO(pin)
+    ddo && result.push(ddo)
   }
+
+  return result
 }
 
 const columns = [
@@ -67,11 +64,17 @@ export default function Bookmarks(): ReactElement {
 
     async function init() {
       setIsLoading(true)
-      const resultPinned = await getAssetsBookmarked(
-        bookmarks,
-        config.metadataCacheUri
-      )
-      setPinned(resultPinned)
+
+      try {
+        const resultPinned = await getAssetsBookmarked(
+          bookmarks,
+          config.metadataCacheUri
+        )
+        setPinned(resultPinned)
+      } catch (error) {
+        Logger.error(error.message)
+      }
+
       setIsLoading(false)
     }
     init()
