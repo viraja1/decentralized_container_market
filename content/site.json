@@ -3,7 +3,7 @@
     "siteTitle": "Decentralized Container Market",
     "siteTagline": "A marketplace to find, publish and trade container image license in the Ocean Network.",
     "siteUrl": "https://market.oceanprotocol.com",
-    "siteIcon": "../src/images/icon.png",
+    "siteIcon": "node_modules/@oceanprotocol/art/logo/favicon-white.png",
     "siteImage": "../src/images/share.png",
     "copyright": "All Rights Reserved. Powered by [Ocean Protocol](https://oceanprotocol.com)",
     "menu": [
