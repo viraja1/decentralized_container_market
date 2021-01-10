@@ -1,16 +1,6 @@
 import React, { ReactElement } from 'react'
-import { ReactComponent as LogoAssetFull } from '@oceanprotocol/art/logo/logo.svg'
-import { ReactComponent as LogoAsset } from '../../images/logo.svg'
-import styles from './Logo.module.css'
+import logo from '../../images/icon.png'
 
-export default function Logo({
-  noWordmark
-}: {
-  noWordmark?: boolean
-}): ReactElement {
-  return noWordmark ? (
-    <LogoAsset className={styles.logo} />
-  ) : (
-    <LogoAssetFull className={styles.logo} />
-  )
+export default function Logo(): ReactElement {
+  return <img src={logo} style={{marginRight: "5px", width: "70px", height: "70px"}} />
 }

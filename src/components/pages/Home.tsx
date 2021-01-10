@@ -17,7 +17,7 @@ const queryHighest = {
   query: {
     nativeSearch: 1,
     query_string: {
-      query: `(price.type:pool) -isInPurgatory:true`
+      query: `(service.attributes.additionalInformation.tags:"container") AND (price.type:pool)   -isInPurgatory:true`
     }
   },
   sort: { 'price.ocean': -1 }
@@ -29,7 +29,7 @@ const queryLatest = {
   query: {
     nativeSearch: 1,
     query_string: {
-      query: `-isInPurgatory:true`
+      query: `(service.attributes.additionalInformation.tags:"container") -isInPurgatory:true`
     }
   },
   sort: { created: -1 }
